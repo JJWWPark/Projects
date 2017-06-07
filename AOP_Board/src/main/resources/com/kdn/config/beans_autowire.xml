@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	default-autowire="constructor"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+	
+	<bean id = "boardDao" name ="dao" class = "com.kdn.model.dao.BoardDaoImpl"/>
+	<bean id ="memberDao" class = "com.kdn.model.dao.MemberDaoImpl"/>
+
+	<bean id = "boardService" class = "com.kdn.model.biz.BoardServiceImpl" />
+	<bean id ="memberService" class = "com.kdn.model.biz.MemberServiceImpl" />
+	
+	<bean id="helloAop"	class="com.kdn.aop.HelloAOP"/>
+	<bean id="timeAop"	class="com.kdn.aop.TimeCal"/>
+	<!-- 
+			1. AOP Namespace 추가
+			2.<aop:config>를 이용해서 설정
+	 -->
+	 
+	 <aop:config>
+	 
+		<aop:aspect ref="helloAop">
+			<!-- pointcut을 재사용하기 위해 설정  -->
+			<aop:pointcut expression="execution(* com.kdn.model.biz.*ServiceImpl.search*(..))" id="helloPc"/>
+			<!-- 핵심모듈 이전에 수행  -->
+			<aop:before method="hello" pointcut-ref="helloPc"/>
+		</aop:aspect>
+		
+		<aop:aspect ref="timeAop">
+			<aop:around method="time" pointcut-ref="helloPc"/>
+		</aop:aspect>	 
+		
+	 </aop:config>
+
+</beans>
